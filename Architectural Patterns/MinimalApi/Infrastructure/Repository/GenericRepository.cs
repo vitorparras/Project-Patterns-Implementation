@@ -15,7 +15,11 @@ namespace Infrastructure.Repository
             _dbSet = _dbContext.Set<TEntity>();
         }
 
-        public async Task<TEntity> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
+        public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate) => await _dbSet.AnyAsync(predicate);
+
+
+
+        public async Task<TEntity> GetByIdAsync(Guid id) => await _dbSet.FindAsync(id);
 
         public async Task<IEnumerable<TEntity>> GetAllAsync() => await _dbSet.ToListAsync();
 
