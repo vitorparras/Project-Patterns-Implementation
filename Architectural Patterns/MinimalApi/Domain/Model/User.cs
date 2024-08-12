@@ -5,7 +5,7 @@ namespace Domain.Model
 {
     public class User : BaseEntity
     {
-        [Required]
+        [Required, EmailAddress]
         public string Email { get; set; }
         
         [Required] 
