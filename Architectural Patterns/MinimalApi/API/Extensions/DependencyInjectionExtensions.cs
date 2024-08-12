@@ -1,4 +1,5 @@
-﻿using Application.Services;
+﻿using API.Middlewares;
+using Application.Services;
 using Application.Services.Interfaces;
 using Infrastructure;
 using Infrastructure.Repository;
@@ -28,7 +29,7 @@ namespace API.Extensions
                 app.UseSwagger()
                    .UseSwaggerUI();
             }
-
+            app.UseMiddleware<JwtTokenValidationMiddleware>();
             app.UseHttpsRedirection();
         }
 
