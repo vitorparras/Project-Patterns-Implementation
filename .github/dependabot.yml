@@ -43,17 +43,21 @@ updates:
           - "*"
         exclude-patterns:
           - Microsoft.*
+          - System.*
+        update-types:
+          - minor
+          - patch
     ignore:
+      # The example targets net8.0; major bumps move packages to the .NET 10 line.
       - dependency-name: Microsoft.*
         update-types:
           - version-update:semver-major
       - dependency-name: System.*
         update-types:
           - version-update:semver-major
-          - System.*
+      - dependency-name: Swashbuckle.AspNetCore
         update-types:
-          - minor
-          - patch
+          - version-update:semver-major
 
   - package-ecosystem: docker
     directory: "/Architectural Patterns/MinimalApi/API"
