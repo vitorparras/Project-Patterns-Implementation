@@ -1,80 +1,125 @@
-# Project-Patterns-Implementation
+# Project Patterns Implementation
 
-## Description
+[![CI](https://github.com/vitorparras/Project-Patterns-Implementation/actions/workflows/ci.yml/badge.svg)](https://github.com/vitorparras/Project-Patterns-Implementation/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/vitorparras/Project-Patterns-Implementation/badge)](https://scorecard.dev/viewer/?uri=github.com/vitorparras/Project-Patterns-Implementation)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-This repository is dedicated to implementing various design patterns. Our goal is to provide clear and well-documented examples that help developers understand and apply these patterns in their own projects. Here, you will find implementations of architectural patterns such as layered architecture, microservices, minimal APIs, as well as design patterns like singleton, factory, strategy, among others.
+Hands-on implementations of architectural and design patterns in C# and .NET.
+Each pattern lives in its own folder with a runnable example and an explanation
+of the problem it solves and its trade-offs.
 
-## Table of Contents
+> **Status:** active. One architectural pattern is implemented; the design
+> patterns listed in the [roadmap](#roadmap) are planned.
 
-- [Architectural Patterns](#architectural-patterns)
-  - [Layered Architecture](#layered-architecture)
-  - [Microservices](#microservices)
-  - [Minimal APIs](#minimal-apis)
-- [Design Patterns](#design-patterns)
-  - [Singleton](#singleton)
-  - [Factory](#factory)
-  - [Strategy](#strategy)
-  - [Observer](#observer)
-  - [Decorator](#decorator)
-  - [Adapter](#adapter)
-  - [Facade](#facade)
-  - [Proxy](#proxy)
-- [How to Contribute](#how-to-contribute)
+## Table of contents
+
+- [Implemented patterns](#implemented-patterns)
+- [Running the Minimal API example](#running-the-minimal-api-example)
+- [Roadmap](#roadmap)
+- [Repository layout](#repository-layout)
+- [Contributing](#contributing)
+- [Security](#security)
+- [Code of conduct](#code-of-conduct)
 - [License](#license)
 
-## Architectural Patterns
+## Implemented patterns
 
-### Layered Architecture
+### Architectural: Minimal API with layered architecture
 
-Implementation of an application using the layered architecture pattern. This pattern organizes the application into different layers, such as presentation, business logic, and data access, promoting a clear separation of responsibilities.
+[`Architectural Patterns/MinimalApi`](<Architectural Patterns/MinimalApi>) is an
+ASP.NET Core 8 **Minimal API** organized in four layers:
 
-### Microservices
+| Project | Responsibility |
+|---|---|
+| `API` | HTTP endpoints grouped by feature (`AuthEndpoints`, `UserEndpoints`), extension methods for DI, Swagger and JWT authentication, and a token-validation middleware |
+| `Application` | Use cases: `AuthService` (login, JWT issuing and validation, token history) and `UserService` |
+| `Domain` | Entities (`User`, `TokenHistory`, `BaseEntity`) and DTOs |
+| `Infrastructure` | EF Core `DbContext` (in-memory provider) and a generic repository |
 
-Example of a microservices architecture, where the application is divided into smaller, independent services that communicate with each other. This pattern promotes scalability and flexibility in application maintenance and development.
+It shows dependency inversion between layers, endpoint grouping, JWT bearer
+authentication with token revocation, and Swagger documentation.
 
-### Minimal APIs
+## Running the Minimal API example
 
-Implementation of minimal APIs, which are designed to create HTTP services with minimal files and dependencies. This pattern is ideal for microservices, where simplicity and efficiency are essential.
+Requirements: [.NET SDK 8.0](https://dotnet.microsoft.com/download/dotnet/8.0).
 
-## Design Patterns
+```bash
+git clone https://github.com/vitorparras/Project-Patterns-Implementation.git
+cd "Project-Patterns-Implementation/Architectural Patterns/MinimalApi"
 
-### Singleton
+# The JWT signing key is NOT in the repository. Set it once with user secrets
+# (any random string with at least 32 characters):
+dotnet user-secrets set "Jwt:SecretKey" "$(openssl rand -hex 32)" --project API
 
-The Singleton pattern ensures that a class has only one instance and provides a global point of access to it.
+dotnet run --project API
+```
 
-### Factory
+Open <http://localhost:5019/swagger>, create a user with `POST /users`, log in
+with `POST /auth/login` and use the returned token in the **Authorize** button.
 
-The Factory pattern is a creational pattern that abstracts the instantiation of objects, allowing subclasses to alter the type of objects that will be created.
+The key can also be provided through the environment variable
+`Jwt__SecretKey`, which is how the Docker image expects it:
 
-### Strategy
+```bash
+docker build -t minimal-api -f API/Dockerfile .
+docker run --rm -p 8080:8080 -e Jwt__SecretKey="$(openssl rand -hex 32)" minimal-api
+```
 
-The Strategy pattern allows the definition of a family of algorithms, encapsulating each one of them and making them interchangeable. This allows the algorithm to vary independently of the clients that use it.
+The application refuses to start without a key. Never commit one.
 
-### Observer
+## Roadmap
 
-The Observer pattern defines a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically.
+Planned examples, each in its own folder with a README. Open a
+[feature request](https://github.com/vitorparras/Project-Patterns-Implementation/issues/new?template=feature_request.yml)
+to propose another or to volunteer for one of these.
 
-### Decorator
+**Architectural**: layered architecture (standalone), clean architecture,
+microservices with messaging, CQRS.
 
-The Decorator pattern allows behavior to be added to individual objects, dynamically, without affecting the behavior of other objects from the same class.
+**Creational**: Singleton, Factory Method, Abstract Factory, Builder.
 
-### Adapter
+**Structural**: Adapter, Decorator, Facade, Proxy, Composite.
 
-The Adapter pattern allows the interface of an existing class to be used as another interface. It is used to allow classes with incompatible interfaces to work together.
+**Behavioral**: Strategy, Observer, Command, Mediator, Chain of Responsibility.
 
-### Facade
+## Repository layout
 
-The Facade pattern provides a simplified interface to a set of interfaces in a subsystem, making the subsystem easier to use.
+```text
+Project-Patterns-Implementation/
+├── Architectural Patterns/
+│   └── MinimalApi/
+│       ├── API/                 # entry point, endpoints, Dockerfile
+│       ├── Application/
+│       ├── Domain/
+│       ├── Infrastructure/
+│       ├── MinimalApi.sln
+│       └── nuget.config         # nuget.org as the only package source
+├── .github/                     # CI, Scorecard, dependency review, Dependabot, templates
+├── .editorconfig
+├── CODE_OF_CONDUCT.md
+├── CONTRIBUTING.md
+├── SECURITY.md
+└── LICENSE
+```
 
-### Proxy
+## Contributing
 
-The Proxy pattern provides a surrogate or placeholder through which an object can control access to another.
+New patterns and improvements to existing examples are welcome. Please read
+[CONTRIBUTING.md](CONTRIBUTING.md) first. The `main` branch is protected: changes
+land only through pull requests with a green build.
 
-## How to Contribute
+## Security
 
-1. Fork the repository
-2. Create a branch for your feature (`git checkout -b feature/new-feature`)
-3. Commit your changes (`git commit -m 'Add new feature'`)
-4. Push to the branch (`git push origin feature/new-feature`)
-5. Open a Pull Request
+Found a vulnerability in an example or a problem in this repository's
+configuration? Follow [SECURITY.md](SECURITY.md) and report it privately.
 
+## Code of conduct
+
+This project follows the [Contributor Covenant](CODE_OF_CONDUCT.md). By
+participating you agree to uphold it.
+
+## License
+
+Licensed under the [MIT License](LICENSE). Copyright © Vitor Hugo Parras.
