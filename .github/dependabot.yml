@@ -47,6 +47,17 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # The example targets net8.0; major bumps move packages to the .NET 10 line.
+      - dependency-name: Microsoft.*
+        update-types:
+          - version-update:semver-major
+      - dependency-name: System.*
+        update-types:
+          - version-update:semver-major
+      - dependency-name: Swashbuckle.AspNetCore
+        update-types:
+          - version-update:semver-major
 
   - package-ecosystem: docker
     directory: "/Architectural Patterns/MinimalApi/API"
@@ -60,3 +71,7 @@ updates:
     commit-message:
       prefix: build
       include: scope
+    ignore:
+      - dependency-name: dotnet/*
+        update-types:
+          - version-update:semver-major
