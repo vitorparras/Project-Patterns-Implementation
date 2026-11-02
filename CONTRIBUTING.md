@@ -66,9 +66,10 @@ checks must pass.
 
 ## Licensing of contributions
 
-Contributions are licensed under the repository license (see [LICENSE](LICENSE)).
-By opening a pull request you confirm that you have the right to license your
-contribution under those terms.
+Code contributions are licensed under the [AGPL-3.0](LICENSE) and content
+contributions (text, images, documents) under [CC BY-SA 4.0](LICENSE-CONTENT),
+the same licenses as the repository. By opening a pull request you confirm that
+you have the right to license your contribution under those terms.
 
 ## Questions
 
